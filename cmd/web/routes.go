@@ -24,6 +24,8 @@ func (app *Config) routes() http.Handler {
 	mux.Post("/register", app.PostRegisterPage)
 	mux.Get("/activate", app.ActivateAccount)
 
+	mux.Mount("/members", app.authRouter())
+
 	mux.Get("/test-email", func(w http.ResponseWriter, r *http.Request) {
 		m := Mail{
 			Domain:      "localhost",
@@ -42,5 +44,14 @@ func (app *Config) routes() http.Handler {
 
 		m.sendMail(msg, make(chan error))
 	})
+	return mux
+}
+
+func (app *Config) authRouter() http.Handler {
+	mux := chi.NewRouter()
+	mux.Use(app.Auth)
+	mux.Get("/plans", app.ChoseSubscription)
+	mux.Get("/subscribe", app.SubscribeToPlan)
+
 	return mux
 }
