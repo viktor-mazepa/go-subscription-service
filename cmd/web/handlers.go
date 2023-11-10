@@ -44,7 +44,7 @@ func (app *Config) PostLoginPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//check password
-	validPassword, err := app.Models.User.PasswordMatches(password)
+	validPassword, err := user.PasswordMatches(password)
 	if err != nil {
 		app.Session.Put(r.Context(), "error", "Invalid credentials.")
 		app.ErrorLog.Println(err)
